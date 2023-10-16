@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama_init:
+        condition: service_completed_successfully
+    ports:
+      - 4000:4000
+    environment:
+      STORYTIME_OLLAMAHOST: ollama
+      STORYTIME_OLLAMAPORT: '11434'
+      STORYTIME_OLLAMAMODEL: mistral-openorca
+      STORYTIME_DBHOST: postgres
+      STORYTIME_DBUSER: storytime
+      STORYTIME_DBNAME: storytime
+      STORYTIME_DBPASS: storytime
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: storytime
+      POSTGRES_PASSWORD: storytime
+      POSTGRES_DB: storytime
+      PGUSER: storytime
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./initdb/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+
+  ollama_init:
+    image: ollama/ollama
+    depends_on:
+      - ollama
+    environment:
+      OLLAMA_HOST: ollama:11434
+    command: pull mistral-openorca
+
+volumes:
+  ollama_data:
+  postgres_data:

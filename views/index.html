@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://unpkg.com/htmx.org@1.9.6" type="text/javascript"></script>
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="container mx-auto">
+        <h1 class="font-bold text-2xl my-16">Storytime</h1>
+
+        <form hx-post="/create" class="grid grid-cols-2 m-4 gap-2">
+            <label for="icast">Cast:</label>
+            <input id="icast" class="col-span-5 input input-bordered" type="text" name="cast" />
+            <label for="ilocation">Location:</label>
+            <input id="ilocation" class="col-span-5 input input-bordered" type="text" name="location" />
+            <label for="iplot">Plot:</label>
+            <input id="iplot" class="col-span-5 input input-bordered" type="text" name="plot" />
+            <button class="btn btn-default">
+                Tell me a story
+            </button>
+        </form>
+
+        <div class="overflow-x-auto">
+            <table class="table table-xs">
+                <thead>
+                <tr>
+                    <th>Cast</th>
+                    <th>Location</th>
+                    <th>Plot</th>
+                    <th>Story</th> 
+                </tr>
+                </thead> 
+                <tbody>
+                {{range .Stories}}
+                <tr>
+                    <td>{{.Cast}}</td> 
+                    <td>{{.Location}}</td> 
+                    <td>{{.Plot}}</td> 
+                    <td>{{.StoryText}}</td> 
+                </tr>
+                {{end}}
+                </tbody> 
+                <tfoot>
+                <tr>
+                    <th>Cast</th>
+                    <th>Location</th>
+                    <th>Plot</th>
+                    <th>Story</th> 
+                </tr>
+                </tfoot>
+            </table>
+            </div>
+    </body>
+
+</html>
